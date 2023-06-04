@@ -22,20 +22,20 @@ func extractDiscord(discordPath *string) {
 }
 
 // Extract Enmity's icons
-func extractIcons(iconsPath *string) {
-	log.Println("extracting", *iconsPath)
+// func extractIcons(iconsPath *string) {
+// 	log.Println("extracting", *iconsPath)
 
-	format := archiver.Zip{}
+// 	format := archiver.Zip{}
 
-	err := format.Unarchive(*iconsPath, "Payload/Discord.app/")
-	if err != nil {
-		log.Fatalln(err)
-	}
+// 	err := format.Unarchive(*iconsPath, "Payload/Discord.app/")
+// 	if err != nil {
+// 		log.Fatalln(err)
+// 	}
 
-	log.Println(*iconsPath, "extracted")
-}
+// 	log.Println(*iconsPath, "extracted")
+// }
 
-// Pack Discord's IPA
+//  Pack Discord's IPA
 func packDiscord() {
 	log.Println("packing discord")
 
@@ -47,7 +47,7 @@ func packDiscord() {
 		log.Fatalln(err)
 	}
 
-	err = os.Rename("Discord.zip", "Enmity.ipa")
+	err = os.Rename("Discord.zip", "Vendetta.ipa")
 	if err != nil {
 		log.Fatalln(err)
 	}

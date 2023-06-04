@@ -9,34 +9,35 @@ import (
 )
 
 const (
-	DEFAULT_IPA_PATH    = "files/Discord.ipa"
-	DEFAULT_ICONS_PATH  = "files/icons.zip"
+	DEFAULT_IPA_PATH   = "files/Discord.ipa"
+	DEFAULT_ICONS_PATH = "files/vendetta_logo.png"
 )
 
+// Im gonna keep this here as itd be tedious to fetch the latest IPA and icons every time
 const (
-	IPA_URL    = "https://github.com/enmity-mod/tweak/blob/main/Discord.ipa?raw=true"
-	ICONS_URL  = "https://files.enmity.app/icons.zip"
+	IPA_URL = "https://github.com/enmity-mod/tweak/blob/main/Discord.ipa?raw=true"
+	// ICONS_URL = "https://raw.githubusercontent.com/vendetta-mod/VendettaManager/main/images/vendetta_logo.png"
 )
 
 func PatchDiscord(discordPath *string, iconsPath *string, dylibPath *string) {
 	log.Println("starting patcher")
 
 	checkFile(discordPath, DEFAULT_IPA_PATH, IPA_URL)
-	checkFile(iconsPath, DEFAULT_ICONS_PATH, ICONS_URL)
+	// checkFile(iconsPath, DEFAULT_ICONS_PATH, ICONS_URL)
 
 	extractDiscord(discordPath)
 
-	log.Println("renaming Discord to Enmity")
+	log.Println("renaming Discord to Vendetta")
 	if err := patchName(); err != nil {
 		log.Fatalln(err)
 	}
 	log.Println("Discord renamed")
 
-	log.Println("adding Enmity url scheme")
-	if err := patchSchemes(); err != nil {
-		log.Fatalln(err)
-	}
-	log.Println("url scheme added")
+	// log.Println("adding Enmity url scheme")
+	// if err := patchSchemes(); err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// log.Println("url scheme added")
 
 	log.Println("remove devices whitelist")
 	if err := patchDevices(); err != nil {
@@ -44,12 +45,12 @@ func PatchDiscord(discordPath *string, iconsPath *string, dylibPath *string) {
 	}
 	log.Println("device whitelist removed")
 
-	log.Println("patch Discord icons")
-	extractIcons(iconsPath)
-	if err := patchIcon(); err != nil {
-		log.Fatalln(err)
-	}
-	log.Println("icons patched")
+	// log.Println("patch Discord icons")
+	// extractIcons(iconsPath)
+	// if err := patchIcon(); err != nil {
+	// 	log.Fatalln(err)
+	// }
+	// log.Println("icons patched")
 
 	log.Println("showing Discord's document folder in the Files app and Finder/iTunes")
 	if err := patchiTunesAndFiles(); err != nil {
@@ -124,33 +125,33 @@ func patchName() error {
 		return err
 	}
 
-	info["CFBundleName"] = "Enmity"
-	info["CFBundleDisplayName"] = "Enmity"
+	info["CFBundleName"] = "Vendetta"
+	info["CFBundleDisplayName"] = "Vendetta"
 
 	err = savePlist(&info)
 	return err
 }
 
 // Patch Discord's URL scheme to add Enmity's URL handler
-func patchSchemes() error {
-	info, err := loadPlist()
-	if err != nil {
-		return err
-	}
+// func patchSchemes() error {
+// 	info, err := loadPlist()
+// 	if err != nil {
+// 		return err
+// 	}
 
-	info["CFBundleURLTypes"] = append(
-		info["CFBundleURLTypes"].([]interface{}),
-		map[string]interface{}{
-			"CFBundleURLName": "Enmity",
-			"CFBundleURLSchemes": []string{
-				"enmity",
-			},
-		},
-	)
+// 	info["CFBundleURLTypes"] = append(
+// 		info["CFBundleURLTypes"].([]interface{}),
+// 		map[string]interface{}{
+// 			"CFBundleURLName": "Enmity",
+// 			"CFBundleURLSchemes": []string{
+// 				"enmity",
+// 			},
+// 		},
+// 	)
 
-	err = savePlist(&info)
-	return err
-}
+// 	err = savePlist(&info)
+// 	return err
+// }
 
 // Remove Discord's device limits
 func patchDevices() error {
@@ -166,21 +167,21 @@ func patchDevices() error {
 }
 
 // Patch the Discord icon to use Enmity's icon
-func patchIcon() error {
-	info, err := loadPlist()
-	if err != nil {
-		return err
-	}
+// func patchIcon() error {
+// 	info, err := loadPlist()
+// 	if err != nil {
+// 		return err
+// 	}
 
-	info["CFBundleIcons"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconName"] = "EnmityIcon"
-	info["CFBundleIcons"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconFiles"] = []string{"EnmityIcon60x60"}
+// 	info["CFBundleIcons"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconName"] = "EnmityIcon"
+// 	info["CFBundleIcons"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconFiles"] = []string{"EnmityIcon60x60"}
 
-	info["CFBundleIcons~ipad"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconName"] = "EnmityIcon"
-	info["CFBundleIcons~ipad"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconFiles"] = []string{"EnmityIcon60x60", "EnmityIcon76x76"}
+// 	info["CFBundleIcons~ipad"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconName"] = "EnmityIcon"
+// 	info["CFBundleIcons~ipad"].(map[string]interface{})["CFBundlePrimaryIcon"].(map[string]interface{})["CFBundleIconFiles"] = []string{"EnmityIcon60x60", "EnmityIcon76x76"}
 
-	err = savePlist(&info)
-	return err
-}
+// 	err = savePlist(&info)
+// 	return err
+// }
 
 // Show Enmity's document folder in Files app and iTunes/Finder
 func patchiTunesAndFiles() error {
